@@ -1,6 +1,5 @@
 
-# You can any WASD games like pacman, subway surfers, temple run etc.
-# The code is inspired by https://github.com/uvipen/AirGesture
+#Able to play any W A S D games
 
 import tensorflow as tf
 import cv2
@@ -8,7 +7,7 @@ import numpy as np
 import multiprocessing as _mp
 from utils import load_graph, detect_hands, predict, is_in_triangle
 from utils import RED, CYAN, YELLOW, BLUE, GREEN
-from pyKey import pressKey, releaseKey, press #inspired by https://github.com/andohuman/pyKey for controlling keyboard keys
+from pyKey import pressKey, releaseKey, press 
 import keyboard
 
 width = 640

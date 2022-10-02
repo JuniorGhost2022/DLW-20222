@@ -1,12 +1,14 @@
-# You can any racing game like road rash, car racing. hill climbing etc which requires holding WASD keys.
-# The code is inspired by https://github.com/uvipen/AirGesture
+
 
 import tensorflow as tf
 import cv2
 import multiprocessing as _mp
 from utils import load_graph, detect_hands, predict
 from utils import ORANGE, RED, GREEN
-from pyKey import pressKey, releaseKey, press #inspired by https://github.com/andohuman/pyKey for controlling keyboard keys
+from pyKey import pressKey, releaseKey, press 
+import keyboard
+import webbrowser
+from flask import Flask, render_template, Response
 
 width = 640
 height = 480
@@ -14,6 +16,7 @@ threshold = 0.6
 alpha = 0.3
 pre_trained_model_path = "model/pretrained_model.pb"
 
+app = Flask(__name__ ,template_folder='./templates')
 
 def main():
     
@@ -35,6 +38,10 @@ def main():
         boxes, scores, classes = detect_hands(frame, graph, sess)
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         results = predict(boxes, scores, classes, threshold, width, height)
+
+        cv2.imwrite('t.jpg', frame)
+        yield (b'--frame\r\n'
+        b'Content-Type: image/jpeg\r\n\r\n' + open('t.jpg', 'rb').read() + b'\r\n')
 
         if len(results) == 1:
             x_min, x_max, y_min, y_max, category = results[0]
@@ -85,3 +92,19 @@ def main():
 if __name__ == '__main__':
     main()
 
+@app.route('/')
+def index():
+    """Video streaming home page."""
+    return render_template('index.html')
+
+@app.route('/video_feed')
+def video_feed():
+    """Video streaming route. Put this in the src attribute of an img tag."""
+    '''return Response(gen_frames(),
+                   mimetype='multipart/x-mixed-replace; boundary=frame')'''
+    return Response(main(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+if __name__ == '__main__':
+    #main()
+    app.run()

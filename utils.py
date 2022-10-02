@@ -1,6 +1,6 @@
 import numpy as np
-import gym
 import tensorflow as tf
+import gym
 from time import sleep
 
 IS_FULLSCREEN = False
@@ -33,11 +33,11 @@ def is_in_triangle(point, triangle):
 def load_graph(path):
     detection_graph = tf.Graph()
     with detection_graph.as_default():
-        graph_def = tf.GraphDef()
-        with tf.gfile.GFile(path, 'rb') as fid:
+        graph_def = tf.compat.v1.GraphDef()
+        with tf.io.gfile.GFile(path, 'rb') as fid:
             graph_def.ParseFromString(fid.read())
             tf.import_graph_def(graph_def, name='')
-        sess = tf.Session(graph=detection_graph)
+        sess = tf.compat.v1.Session(graph=detection_graph)
     return detection_graph, sess
 
 
